@@ -8,29 +8,31 @@
 
 package com.xiaoleilu.loServer.action.admin;
 
-
 import cn.wildfirechat.common.APIPath;
+import cn.wildfirechat.common.ErrorCode;
+import cn.wildfirechat.pojos.*;
+import cn.wildfirechat.proto.WFCMessage;
 import com.google.gson.Gson;
 import com.xiaoleilu.loServer.RestResult;
 import com.xiaoleilu.loServer.annotation.HttpMethod;
 import com.xiaoleilu.loServer.annotation.Route;
 import com.xiaoleilu.loServer.handler.Request;
 import com.xiaoleilu.loServer.handler.Response;
-import cn.wildfirechat.pojos.InputKickoffGroupMember;
 import io.moquette.persistence.RPCCenter;
 import io.moquette.persistence.TargetEntry;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import cn.wildfirechat.common.ErrorCode;
+import io.netty.util.internal.StringUtil;
 import win.liyufan.im.IMTopic;
+import win.liyufan.im.UUIDGenerator;
 
 import java.util.concurrent.Executor;
 
-@Route(APIPath.Group_Member_Kickoff)
+@Route(APIPath.Create_Channel)
 @HttpMethod("POST")
-public class KickoffGroupMemberAction extends AdminAction {
+public class CreateChannelAction extends AdminAction {
 
     @Override
     public boolean isTransactionAction() {
@@ -40,16 +42,23 @@ public class KickoffGroupMemberAction extends AdminAction {
     @Override
     public boolean action(Request request, Response response) {
         if (request.getNettyRequest() instanceof FullHttpRequest) {
-            InputKickoffGroupMember inputKickoffGroupMember = getRequestBody(request.getNettyRequest(), InputKickoffGroupMember.class);
-            if (inputKickoffGroupMember.isValide()) {
-                RPCCenter.getInstance().sendRequest(inputKickoffGroupMember.getOperator(), null, IMTopic.KickoffGroupMemberTopic, inputKickoffGroupMember.toProtoGroupRequest().toByteArray(), inputKickoffGroupMember.getOperator(), TargetEntry.Type.TARGET_TYPE_USER, new RPCCenter.Callback() {
+            InputCreateChannel inputCreateChannel = getRequestBody(request.getNettyRequest(), InputCreateChannel.class);
+            if (inputCreateChannel != null
+                && !StringUtil.isNullOrEmpty(inputCreateChannel.getName())) {
+
+
+                if(StringUtil.isNullOrEmpty(inputCreateChannel.getTargetId())) {
+                    inputCreateChannel.setTargetId(messagesStore.getShortUUID());
+                }
+
+                RPCCenter.getInstance().sendRequest(inputCreateChannel.getOwner(), null, IMTopic.CreateChannelTopic, inputCreateChannel.toProtoChannelInfo().toByteArray(), inputCreateChannel.getOwner(), TargetEntry.Type.TARGET_TYPE_USER, new RPCCenter.Callback() {
                     @Override
                     public void onSuccess(byte[] result) {
                         ByteBuf byteBuf = Unpooled.buffer();
                         byteBuf.writeBytes(result);
                         ErrorCode errorCode = ErrorCode.fromCode(byteBuf.readByte());
                         if (errorCode == ErrorCode.ERROR_CODE_SUCCESS) {
-                            sendResponse(response, null, null);
+                            sendResponse(response, null, new OutputCreateChannel(inputCreateChannel.getTargetId()));
                         } else {
                             sendResponse(response, errorCode, null);
                         }
@@ -78,6 +87,7 @@ public class KickoffGroupMemberAction extends AdminAction {
                 RestResult result = RestResult.resultOf(ErrorCode.INVALID_PARAMETER);
                 response.setContent(new Gson().toJson(result));
             }
+
         }
         return true;
     }
