@@ -2,17 +2,18 @@
 
 野火IM是一套跨平台、核心功能开源的即时通讯解决方案，主要包含以下内容。
 
-| 仓库                                                         | 说明                                                    | 备注                                           |
-| ------------------------------------------------------------ | ------------------------------------------------------- | ---------------------------------------------- |
-| [android-chat](https://github.com/wildfirechat/android-chat) | 野火IM Android SDK源码和App源码                                      | 可以很方便地进行二次开发，或集成到现有应用当中 |
-| [ios-chat](https://github.com/wildfirechat/ios-chat)         | 野火IM iOS SDK源码和App源码                                          | 可以很方便地进行二次开发，或集成到现有应用当中 |
-| [pc-chat](https://github.com/wildfirechat/pc-chat)           | 基于[Electron](https://electronjs.org/)开发的PC平台应用 |                                                |
-| [proto](https://github.com/wildfirechat/proto)               | 野火IM的协议栈实现                                      |                                                |
-| [server](https://github.com/wildfirechat/server)             | IM server                                               |                                                |
-| [app server](https://github.com/wildfirechat/app_server)     | 应用服务端                                              |                                                |
-| [robot_server](https://github.com/wildfirechat/robot_server) | 机器人服务端                                            |                                                |
-| [push_server](https://github.com/wildfirechat/push_server)   | 推送服务器                                              |                                                |
-| [docs](https://github.com/wildfirechat/docs)                 | 野火IM相关文档，包含设计、概念、开发、使用说明          |                                                |
+| 仓库                                                         | 说明                                                    | 备注 |
+| ------------------------------------------------------------ | ------------------------------------------------------- | ---- |
+| [android-chat](https://github.com/wildfirechat/android-chat) | 野火IM Android SDK源码和App源码                       |可以很方便地进行二次开发，或集成到现有应用当中      |
+| [ios-chat](https://github.com/wildfirechat/ios-chat)         | 野火IM iOS SDK源码和App源码                            |可以很方便地进行二次开发，或集成到现有应用当中      |
+| [pc-chat](https://github.com/wildfirechat/pc-chat)           | 基于[Electron](https://electronjs.org/)开发的PC平台应用 |      |
+| [web-chat](https://github.com/wildfirechat/web-chat)          | Web平台的Demo, [体验地址](http://web.wildfirechat.cn)   |      |
+| [wx-chat](https://github.com/wildfirechat/wx-chat)           | 微信小程序平台的Demo   |      |
+| [server](https://github.com/wildfirechat/server)             | IM server                                               |      |
+| [app server](https://github.com/wildfirechat/app_server)     | 应用服务端                                          |      |
+| [robot_server](https://github.com/wildfirechat/robot_server) | 机器人服务端                                        |      |
+| [push_server](https://github.com/wildfirechat/push_server)   | 推送服务器                                              |      |
+| [docs](https://github.com/wildfirechat/docs)                 | 野火IM相关文档，包含设计、概念、开发、使用说明          |      | |                                            |
 
 # server
 本工程为野火IM 社区版IM服务软件。野火IM作为一个通用的即时通讯解决方案，可以集成到各种应用中。请阅读[docs](http://docs.wildfirechat.cn)或下载服务器[发布版本](https://github.com/wildfirechat/server/releases)
@@ -28,13 +29,10 @@
 2. imndx  邮箱: imndx@wildfirechat.cn  微信：wfchat
 
 ### 问题交流
-1. 微信交流群（请先加我们好友，我们再邀请您进群）
 
-  ![微信二维码](http://static.wildfirechat.cn/wx_qr_wildfirechat.jpeg)   ![微信二维码](http://static.wildfirechat.cn/wx_qr_wfc.jpeg)
-  
-2. 如果大家发现bug，请在GitHub提issue
-3. 其他问题，请到[野火IM论坛](http://bbs.wildfirechat.cn/)进行交流学习
-4. 微信公众号
+1. 如果大家发现bug，请在GitHub提issue
+2. 其他问题，请到[野火IM论坛](http://bbs.wildfirechat.cn/)进行交流学习
+3. 微信公众号
 
 <img src="http://static.wildfirechat.cn/wx_wfc_qrcode.jpg" width = 50% height = 50% />
 
@@ -44,6 +42,11 @@
 我们提供了体验demo，请使用微信扫码下载安装体验
 
 ![野火IM](http://static.wildfirechat.cn/download_qrcode.png)
+
+#### 加入野火官方体验交流群
+使用野火IM移动客户端扫码下面二维码（不是使用微信扫码），和野火IM的爱好者一起畅谈野火IM的问题和经验：
+
+![野火IM官方交流群](http://static.wildfirechat.cn/wildfirechat_official_group.jpeg)
 
 #### 应用截图
 ![ios-demo](http://static.wildfirechat.cn/ios-demo.gif)

@@ -16,6 +16,7 @@
 
 package io.moquette.spi.impl;
 
+import cn.wildfirechat.common.ErrorCode;
 import cn.wildfirechat.proto.WFCMessage;
 import io.moquette.persistence.RPCCenter;
 import io.moquette.interception.InterceptHandler;
@@ -55,7 +56,24 @@ import static io.moquette.server.ConnectionDescriptor.ConnectionState.*;
  *
  * Used by the front facing class ProtocolProcessorBootstrapper.
  */
+
 public class ProtocolProcessor {
+
+
+    public void kickoffSession(final MemorySessionStore.Session session) {
+        mServer.getImBusinessScheduler().execute(()->{
+            ConnectionDescriptor descriptor = connectionDescriptors.getConnection(session.getClientID());
+            try {
+                if (descriptor != null) {
+                    processDisconnect(descriptor.getChannel(), true);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Utility.printExecption(LOG, e);
+            }
+        });
+    }
+
     private void handleTargetRemovedFromCurrentNode(TargetEntry target) {
         System.out.println("kickof user " + target);
         if (target.type == TargetEntry.Type.TARGET_TYPE_USER) {
@@ -142,9 +160,8 @@ public class ProtocolProcessor {
         String clientId = payload.clientIdentifier();
         LOG.info("Processing CONNECT message. CId={}, username={}", clientId, payload.userName());
 
-        if (msg.variableHeader().version() != MqttVersion.MQTT_3_1.protocolLevel()
-                && msg.variableHeader().version() != MqttVersion.MQTT_3_1_1.protocolLevel()
-                && msg.variableHeader().version() != MqttVersion.Wildfire_1.protocolLevel()) {
+        if (msg.variableHeader().version() < MqttVersion.MQTT_3_1_1.protocolLevel() ||
+                msg.variableHeader().version() >= MqttVersion.Wildfire_Max.protocolLevel()) {
             MqttConnAckMessage badProto = connAck(CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION);
 
             LOG.error("MQTT protocol version is not valid. CId={}", clientId);
@@ -165,7 +182,11 @@ public class ProtocolProcessor {
 
         MqttVersion mqttVersion = MqttVersion.fromProtocolLevel(msg.variableHeader().version());
         if (!login(channel, msg, clientId, mqttVersion)) {
+            MqttConnAckMessage badId = connAck(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD);
+
+            channel.writeAndFlush(badId);
             channel.close();
+            LOG.error("The MQTT login failure. Username={}", payload.userName());
             return;
         }
         if (!mServer.m_initialized) {
@@ -254,8 +275,15 @@ public class ProtocolProcessor {
 
                 MemorySessionStore.Session session = m_sessionsStore.getSession(clientId);
                 if (session == null) {
-                    m_sessionsStore.createNewSession(msg.payload().userName(), clientId, true, false);
+                    ErrorCode errorCode = m_sessionsStore.loadActiveSession(msg.payload().userName(), clientId);
+                    if (errorCode != ErrorCode.ERROR_CODE_SUCCESS) {
+                        return false;
+                    }
                     session = m_sessionsStore.getSession(clientId);
+                }
+
+                if (session.getDeleted() != 0) {
+                    return false;
                 }
                 
                 if (session != null && session.getUsername().equals(msg.payload().userName())) {
@@ -502,14 +530,11 @@ public class ProtocolProcessor {
             return;
         }
 
-        boolean stillPresent = this.connectionDescriptors.removeConnection(existingDescriptor);
-        if (!stillPresent) {
-            // another descriptor was inserted
-            LOG.warn("Another descriptor has been inserted. CId={}", clientID);
-            return;
-        }
+        this.connectionDescriptors.removeConnection(existingDescriptor);
 
         LOG.info("The DISCONNECT message has been processed. CId={}", clientID);
+
+        channel.closeFuture();
 
         //disconnect the session
         m_sessionsStore.sessionForClient(clientID).disconnect(clearSession);

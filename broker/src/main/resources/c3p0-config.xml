@@ -1,4 +1,7 @@
 <?xml version ="1.0" encoding="UTF-8"?>
+
+<!--    # 本配置文件为debug使用，修改这里不会在Release包中生效。Release中包含的配置文件在 ${Porject_Path}/distribution/src/main/resources目录下-->
+
 <c3p0-config>
     <!-- This is default config! -->
     <default-config>
@@ -19,7 +22,7 @@
         <!--MySQL数据库用户名-->
         <property name="user">root</property>
         <!--MySQL数据库密码-->
-        <property name="password">lt123456</property>
+        <property name="password">123456</property>
         <!-- 初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3-->
         <property name="initialPoolSize">10</property>
         <!--最大空闲时间，60秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 -->

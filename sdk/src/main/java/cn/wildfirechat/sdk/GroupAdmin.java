@@ -52,6 +52,17 @@ public class GroupAdmin {
         return AdminHttpUtils.httpJsonPost(path, transferGroup, Void.class);
     }
 
+    public static IMResult<Void> modifyGroupInfo(String operator, String groupId, int type, String value, List<Integer> to_lines) throws Exception {
+        String path = APIPath.Group_Modify_Info;
+        InputModifyGroupInfo modifyGroupInfo = new InputModifyGroupInfo();
+        modifyGroupInfo.setGroup_id(groupId);
+        modifyGroupInfo.setOperator(operator);
+        modifyGroupInfo.setTo_lines(to_lines);
+        modifyGroupInfo.setType(type);
+        modifyGroupInfo.setValue(value);
+        return AdminHttpUtils.httpJsonPost(path, modifyGroupInfo, Void.class);
+    }
+
 
     public static IMResult<OutputGroupMemberList> getGroupMembers(String groupId) throws Exception {
         String path = APIPath.Group_Member_List;
@@ -77,6 +88,20 @@ public class GroupAdmin {
         return AdminHttpUtils.httpJsonPost(path, addGroupMember, Void.class);
     }
 
+    public static IMResult<Void> setGroupManager(String operator, String groupId, List<String> groupMemberIds, boolean isManager, List<Integer> to_lines, MessagePayload  notify_message) throws Exception {
+        String path = APIPath.Group_Set_Manager;
+        InputSetGroupManager addGroupMember = new InputSetGroupManager();
+        addGroupMember.setGroup_id(groupId);
+        addGroupMember.setMembers(groupMemberIds);
+        addGroupMember.setIs_manager(isManager);
+        addGroupMember.setOperator(operator);
+        addGroupMember.setTo_lines(to_lines);
+        addGroupMember.setNotify_message(notify_message);
+        return AdminHttpUtils.httpJsonPost(path, addGroupMember, Void.class);
+    }
+
+
+
     public static IMResult<Void> kickoffGroupMembers(String operator, String groupId, List<String> groupMemberIds, List<Integer> to_lines, MessagePayload  notify_message) throws Exception {
         String path = APIPath.Group_Member_Kickoff;
         InputKickoffGroupMember kickoffGroupMember = new InputKickoffGroupMember();
@@ -87,5 +112,13 @@ public class GroupAdmin {
         kickoffGroupMember.setNotify_message(notify_message);
         return AdminHttpUtils.httpJsonPost(path, kickoffGroupMember, Void.class);
     }
+
+    public static IMResult<OutputGroupIds> getUserGroups(String user) throws Exception {
+        String path = APIPath.Get_User_Groups;
+        InputUserId inputUserId = new InputUserId();
+        inputUserId.setUserId(user);
+        return AdminHttpUtils.httpJsonPost(path, inputUserId, OutputGroupIds.class);
+    }
+
 
 }

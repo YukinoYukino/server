@@ -22,11 +22,11 @@ import java.util.List;
 public class FriendPullHandler extends IMHandler<WFCMessage.Version> {
     @Override
     public ErrorCode action(ByteBuf ackPayload, String clientID, String fromUser, boolean isAdmin, WFCMessage.Version request, Qos1PublishHandler.IMCallback callback) {
-        List<FriendData> friendDatas = m_messagesStore.getFriendList(fromUser, request.getVersion());
+        List<FriendData> friendDatas = m_messagesStore.getFriendList(fromUser, clientID, request.getVersion());
         WFCMessage.GetFriendsResult.Builder builder = WFCMessage.GetFriendsResult.newBuilder();
         for (FriendData data : friendDatas
             ) {
-            WFCMessage.Friend.Builder builder1 = WFCMessage.Friend.newBuilder().setState(data.getState()).setUid(data.getFriendUid()).setUpdateDt(data.getTimestamp());
+            WFCMessage.Friend.Builder builder1 = WFCMessage.Friend.newBuilder().setState(data.getState()).setBlacked(data.getBlacked()).setUid(data.getFriendUid()).setUpdateDt(data.getTimestamp());
             if (!StringUtil.isNullOrEmpty(data.getAlias())) {
                 builder1.setAlias(data.getAlias());
             }

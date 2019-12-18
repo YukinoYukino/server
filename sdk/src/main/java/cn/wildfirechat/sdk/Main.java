@@ -98,7 +98,7 @@ public class Main {
             System.exit(-1);
         }
 
-        IMResult<OutputGetIMTokenData> resultGetToken = UserAdmin.getUserToken(userInfo.getUserId(), "client111");
+        IMResult<OutputGetIMTokenData> resultGetToken = UserAdmin.getUserToken(userInfo.getUserId(), "client111", ProtoConstants.Platform.Platform_Android);
         if (resultGetToken != null && resultGetToken.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
             System.out.println("get token success: " + resultGetToken.getResult().getToken());
         } else {
@@ -222,6 +222,15 @@ public class Main {
             System.exit(-1);
         }
 
+        voidIMResult = GroupAdmin.modifyGroupInfo(groupInfo.getOwner(), groupInfo.getTarget_id(), ProtoConstants.ModifyGroupInfoType.Modify_Group_Name,"HelloWorld", null);
+        if (voidIMResult != null && voidIMResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
+            System.out.println("transfer success");
+        } else {
+            System.out.println("create group failure");
+            System.exit(-1);
+        }
+
+
         resultGetGroupInfo = GroupAdmin.getGroupInfo(groupInfo.getTarget_id());
         if (resultGetGroupInfo != null && resultGetGroupInfo.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
             if ("user2".equals(resultGetGroupInfo.getResult().getOwner())) {
@@ -258,6 +267,36 @@ public class Main {
             System.out.println("kickoff group member failure");
             System.exit(-1);
         }
+
+        voidIMResult = GroupAdmin.setGroupManager("user1", groupInfo.getTarget_id(), Arrays.asList("user4", "user5"), true, null, null);
+        if (voidIMResult != null && voidIMResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
+            System.out.println("set group manager success");
+        } else {
+            System.out.println("set group manager failure");
+            System.exit(-1);
+        }
+
+        voidIMResult = GroupAdmin.setGroupManager("user1", groupInfo.getTarget_id(), Arrays.asList("user4", "user5"), false, null, null);
+        if (voidIMResult != null && voidIMResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
+            System.out.println("cancel group manager success");
+        } else {
+            System.out.println("cancel group manager failure");
+            System.exit(-1);
+        }
+
+        IMResult<OutputGroupIds> groupIdsIMResult = GroupAdmin.getUserGroups("user1");
+        if (groupIdsIMResult != null && groupIdsIMResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
+            if (groupIdsIMResult.getResult().getGroupIds().contains(groupInfo.getTarget_id())) {
+                System.out.println("get user groups success");
+            } else {
+                System.out.println("get user groups failure");
+                System.exit(-1);
+            }
+        } else {
+            System.out.println("get user groups failure");
+            System.exit(-1);
+        }
+
 
         //***********************************************
         //****  消息相关功能
@@ -363,6 +402,15 @@ public class Main {
             System.out.println("robot get user info success");
         } else {
             System.out.println("robot get user info by userId failure");
+            System.exit(-1);
+        }
+
+
+        voidIMResult = UserAdmin.destroyUser("user1");
+        if (voidIMResult != null && voidIMResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
+            System.out.println("destroy user success");
+        } else {
+            System.out.println("destroy user failure");
             System.exit(-1);
         }
     }
